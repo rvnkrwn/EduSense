@@ -2,26 +2,31 @@ const {userModel} = require("../models");
 const {encryptPassword, verifyPassword, generateToken} = require("../utils/helper");
 
 exports.create = async (req, res) => {
-    const {fullName, email, password, phone} = req.body;
+    const {fullName, email, password, phone, role} = req.body;
 
-    if (!fullName || !email || !password || !phone) {
+    if (!fullName || !email || !password || !phone || !role) {
         return res.status(400).json({msg: "Missing required fields"})
     }
 
+    const user = await userModel.findOne({email});
+
+    if (user){
+        return res.status(400).json({msg: "Email already exits"})
+    }
     const passwordV2 = await encryptPassword(password);
     try {
         await userModel.create({
             fullName,
             email,
             password: passwordV2,
-            phone
+            phone,
+            role
         });
-        return res.status(200).json({msg: "Successfully Created"})
+        return res.status(200).json({msg: "User registered successfully"})
     } catch (error) {
-        return res.status(500).json({msg: "Error creating user", error});
+        return res.status(500).json({msg: "Error creating user", error: error.message});
     }
 }
-
 
 exports.login = async (req, res) => {
     const {email, password} = req.body;
@@ -38,11 +43,121 @@ exports.login = async (req, res) => {
             return res.status(401).json({msg: "Invalid email or password"});
         }
         const payload = {
-            userId: user._id
+            userId: user._id,
+            role: user.role
         };
         const token = await generateToken(payload);
-        return res.status(200).json({msg: "Successfully Login", token});
+        return res.status(200).json({msg: "User logged successfully", token});
     } catch (error) {
         return res.status(500).json({msg: "Error creating user", error: error.message});
     }
 }
+
+exports.getUser = async (req, res) => {
+    const { userId } = req.user; // Assuming the user's ID is stored in the _id field
+
+    try {
+        const user = await userModel.findById(userId).select("-password");
+
+        if (!user) {
+            return res.status(404).json({ msg: "User not found" });
+        }
+
+        return res.status(200).json(user);
+    } catch (error) {
+        return res.status(500).json({ msg: "Error retrieving user", error: error.message });
+    }
+};
+
+
+
+exports.findUser = async (req, res) => {
+    const {userId} = req.params;
+    try {
+        const user = await userModel.findById(userId);
+        if (!user) {
+            return res.status(404).json({msg: "User not found"})
+        }
+        const {password, ...data} = user._doc;
+        res.status(200).json(data);
+    } catch (error) {
+        return res.status(500).json({msg: "Error get user", error: error.message});
+    }
+}
+
+exports.findAllUser = async (req, res) => {
+    try {
+        const users = await userModel.find({}, { password: 0 });
+        return res.status(200).json(users);
+    } catch (error) {
+        return res.status(500).json({ msg: "Error retrieving users", error });
+    }
+};
+
+exports.updateUser = async (req, res) => {
+    const {userId} = req.user;
+    const {password, ...updateData} = req.body;
+
+    try {
+        const updatedUser = await userModel.findByIdAndUpdate(
+            userId,
+            updateData,
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ msg: "User not found" });
+        }
+
+        return res.status(200).json({ msg: "User updated successfully" });
+    } catch (error) {
+        return res.status(500).json({ msg: "Error updating user", error });
+    }
+};
+
+exports.updatePassword = async (req, res) => {
+    const {userId} = req.user;
+    const {newPassword} = req.body;
+    const passwordV2 = await encryptPassword(newPassword)
+
+    try {
+        const updatedUser = await userModel.findByIdAndUpdate(
+            userId,
+            {password: passwordV2},
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ msg: "User not found" });
+        }
+
+        return res.status(200).json({ msg: "User updated successfully" });
+    } catch (error) {
+        return res.status(500).json({ msg: "Error updating user", error });
+    }
+};
+
+exports.deleteUser = async (req, res) => {
+    const { userId } = req.params;
+    const { role } = req.user;
+
+    try {
+        if (role !== "admin") {
+            return res.status(403).json({ msg: "Only admin can delete user" });
+        }
+        const user = await userModel.findById(userId);
+        if (user.role === "admin"){
+            return res.status(403).json({ msg: "Can't delete admin" });
+        }
+
+        const deletedUser = await userModel.findByIdAndDelete(userId);
+
+        if (!deletedUser) {
+            return res.status(404).json({ msg: "User not found" });
+        }
+
+        return res.status(200).json({ msg: "User deleted successfully" });
+    } catch (error) {
+        return res.status(500).json({ msg: "Error deleting user", error });
+    }
+};

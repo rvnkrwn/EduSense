@@ -10,6 +10,7 @@ const userSchema = new Schema({
     email: {
         type: String,
         required: true,
+        unique: true
     },
     password: {
         type: String,
@@ -21,8 +22,9 @@ const userSchema = new Schema({
     },
     role: {
         type: String,
-        enum: ['teacher', 'student'],
+        enum: ['teacher', 'student', 'admin'],
         default: 'student',
+        required: true
     },
     classes: [{
         type: Schema.Types.ObjectId,
