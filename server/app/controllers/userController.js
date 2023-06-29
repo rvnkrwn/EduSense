@@ -1,7 +1,5 @@
 const {userModel} = require("../models");
-const encryptPassword = require("../utils/helper");
-const verifyPassword = require("../utils/helper");
-const generateToken = require("../utils/helper");
+const {encryptPassword, verifyPassword, generateToken} = require("../utils/helper");
 
 exports.create = async (req, res) => {
     const {fullName, email, password, phone} = req.body;
@@ -30,7 +28,6 @@ exports.login = async (req, res) => {
     if (!email || !password) {
         return res.status(400).json({msg: "Missing required fields"});
     }
-
     try {
         const user = await userModel.findOne({email});
         if (!user) {
@@ -40,10 +37,12 @@ exports.login = async (req, res) => {
         if (!match) {
             return res.status(401).json({msg: "Invalid email or password"});
         }
-        const {password, ...payload} = user;
-        const token = generateToken(payload);
+        const payload = {
+            userId: user._id
+        };
+        const token = await generateToken(payload);
         return res.status(200).json({msg: "Successfully Login", token});
     } catch (error) {
-        return res.status(500).json({msg: "Error creating user", error});
+        return res.status(500).json({msg: "Error creating user", error: error.message});
     }
 }
