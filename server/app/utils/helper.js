@@ -6,6 +6,11 @@ async function generateToken(payload) {
     return token;
 }
 
+async function generateTokenResetPassword(payload) {
+    const token = await jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: "5m"});
+    return token;
+}
+
 async function verifyToken(token) {
     const decoded = await jwt.verify(token, process.env.JWT_SECRET);
     return decoded;
@@ -21,9 +26,22 @@ async function verifyPassword(password, hash) {
     return isMatch;
 }
 
+async function generateOTP() {
+    let OTP = '';
+    const generate = () => {
+        for (let i = 0; i < 6; i++){
+            OTP += Math.floor(Math.random()*10);
+        }
+    }
+
+    await generate();
+    return OTP;
+}
+
 module.exports = {
     generateToken,
     verifyToken,
     encryptPassword,
     verifyPassword,
+    generateTokenResetPassword
 };

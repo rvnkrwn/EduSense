@@ -20,6 +20,10 @@ const userSchema = new Schema({
         type: String,
         required: true,
     },
+    verifyToken: {
+        type: String,
+        default: null
+    },
     role: {
         type: String,
         enum: ['teacher', 'student', 'admin'],

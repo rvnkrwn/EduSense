@@ -7,6 +7,7 @@ module.exports = app => {
     // Post Method
     userRoute.post("/register", userController.create);
     userRoute.post("/login", userController.login);
+    userRoute.post("/forget-password", userController.sendResetPassword);
 
     // Get Method
     userRoute.get("/get-user", authMiddleware, userController.getUser);
@@ -16,6 +17,7 @@ module.exports = app => {
     // Put Method
     userRoute.put("/update", authMiddleware, userController.updateUser);
     userRoute.put("/update-password", authMiddleware, userController.updatePassword);
+    userRoute.put("/reset-password/:token", userController.verifyTokenRestPassword);
 
     // Delete Method
     userRoute.delete("/delete/:userId", authMiddleware, userController.deleteUser);

@@ -1,5 +1,6 @@
 const {userModel} = require("../models");
-const {encryptPassword, verifyPassword, generateToken} = require("../utils/helper");
+const {encryptPassword, verifyPassword, generateToken, generateTokenResetPassword, verifyToken} = require("../utils/helper");
+const {sendResetPasswordEmail} = require("../utils/nodemailer");
 
 exports.create = async (req, res) => {
     const {fullName, email, password, phone, role} = req.body;
@@ -10,7 +11,7 @@ exports.create = async (req, res) => {
 
     const user = await userModel.findOne({email});
 
-    if (user){
+    if (user) {
         return res.status(400).json({msg: "Email already exits"})
     }
     const passwordV2 = await encryptPassword(password);
@@ -54,22 +55,20 @@ exports.login = async (req, res) => {
 }
 
 exports.getUser = async (req, res) => {
-    const { userId } = req.user; // Assuming the user's ID is stored in the _id field
+    const {userId} = req.user; // Assuming the user's ID is stored in the _id field
 
     try {
         const user = await userModel.findById(userId).select("-password");
 
         if (!user) {
-            return res.status(404).json({ msg: "User not found" });
+            return res.status(404).json({msg: "User not found"});
         }
 
         return res.status(200).json(user);
     } catch (error) {
-        return res.status(500).json({ msg: "Error retrieving user", error: error.message });
+        return res.status(500).json({msg: "Error retrieving user", error: error.message});
     }
 };
-
-
 
 exports.findUser = async (req, res) => {
     const {userId} = req.params;
@@ -87,10 +86,10 @@ exports.findUser = async (req, res) => {
 
 exports.findAllUser = async (req, res) => {
     try {
-        const users = await userModel.find({}, { password: 0 });
+        const users = await userModel.find({}, {password: 0});
         return res.status(200).json(users);
     } catch (error) {
-        return res.status(500).json({ msg: "Error retrieving users", error });
+        return res.status(500).json({msg: "Error retrieving users", error});
     }
 };
 
@@ -102,16 +101,16 @@ exports.updateUser = async (req, res) => {
         const updatedUser = await userModel.findByIdAndUpdate(
             userId,
             updateData,
-            { new: true }
+            {new: true}
         );
 
         if (!updatedUser) {
-            return res.status(404).json({ msg: "User not found" });
+            return res.status(404).json({msg: "User not found"});
         }
 
-        return res.status(200).json({ msg: "User updated successfully" });
+        return res.status(200).json({msg: "User updated successfully"});
     } catch (error) {
-        return res.status(500).json({ msg: "Error updating user", error });
+        return res.status(500).json({msg: "Error updating user", error});
     }
 };
 
@@ -124,40 +123,85 @@ exports.updatePassword = async (req, res) => {
         const updatedUser = await userModel.findByIdAndUpdate(
             userId,
             {password: passwordV2},
-            { new: true }
+            {new: true}
         );
 
         if (!updatedUser) {
-            return res.status(404).json({ msg: "User not found" });
+            return res.status(404).json({msg: "User not found"});
         }
 
-        return res.status(200).json({ msg: "User updated successfully" });
+        return res.status(200).json({msg: "User updated successfully"});
     } catch (error) {
-        return res.status(500).json({ msg: "Error updating user", error });
+        return res.status(500).json({msg: "Error updating user", error});
     }
 };
 
 exports.deleteUser = async (req, res) => {
-    const { userId } = req.params;
-    const { role } = req.user;
+    const {userId} = req.params;
+    const {role} = req.user;
 
     try {
         if (role !== "admin") {
-            return res.status(403).json({ msg: "Only admin can delete user" });
+            return res.status(403).json({msg: "Only admin can delete user"});
         }
         const user = await userModel.findById(userId);
-        if (user.role === "admin"){
-            return res.status(403).json({ msg: "Can't delete admin" });
+        if (user.role === "admin") {
+            return res.status(403).json({msg: "Can't delete admin"});
         }
 
         const deletedUser = await userModel.findByIdAndDelete(userId);
 
         if (!deletedUser) {
-            return res.status(404).json({ msg: "User not found" });
+            return res.status(404).json({msg: "User not found"});
         }
 
-        return res.status(200).json({ msg: "User deleted successfully" });
+        return res.status(200).json({msg: "User deleted successfully"});
     } catch (error) {
-        return res.status(500).json({ msg: "Error deleting user", error });
+        return res.status(500).json({msg: "Error deleting user", error});
     }
 };
+
+exports.sendResetPassword = async (req, res) => {
+    const {email} = req.body;
+    if (!email) {
+        return res.status(400).json({msg: "Missing required fields"});
+    }
+    try {
+        const user = await userModel.findOne({email});
+        if (!user) {
+            return res.status(200).json({msg: "If the email is registered, an OTP will be sent for verification."});
+        }
+        const payload = {
+            userId: user._id
+        }
+        const token = await generateTokenResetPassword(payload);
+        await sendResetPasswordEmail(user.fullName, email, token);
+        return res.status(200).json({msg: "If the email is registered, an OTP will be sent for verification."});
+    } catch (error) {
+        return res.status(500).json({msg: "Error sending OTP", error});
+    }
+}
+
+exports.verifyTokenRestPassword = async (req, res) => {
+    const {token} = req.params;
+    const {password} = req.body;
+    const passwordV2 = await encryptPassword(password);
+    if (!token){
+        res.status(400).json({msg: "Request token is invalid"})
+    }
+    try {
+        const {userId} = await verifyToken(token);
+
+
+        const user = await userModel.findById(userId);
+        if (!user) {
+            return res.status(404).json({msg: "User not found"});
+        }
+
+        user.password = passwordV2;
+        await user.save();
+        res.json({msg: "Successfully updated password"})
+    } catch (error) {
+        return res.status(500).json({msg: "Link is Expired"});
+    }
+}
