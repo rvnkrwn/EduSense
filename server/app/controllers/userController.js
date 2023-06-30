@@ -2,7 +2,7 @@ const {userModel, classModel} = require("../models");
 const {
     encryptPassword, verifyPassword, generateToken, generateTokenResetPassword, verifyToken
 } = require("../utils/helper");
-const {sendResetPasswordEmail} = require("../utils/nodemailer");
+const {sendResetPasswordEmail, sendRegistrationThankYouEmail} = require("../utils/nodemailer");
 
 // User CRUD
 exports.create = async (req, res) => {
@@ -21,6 +21,7 @@ exports.create = async (req, res) => {
         await userModel.create({
             fullName, email, password: passwordV2, phone, role
         });
+        await sendRegistrationThankYouEmail(fullName, email)
         return res.status(200).json({msg: "User registered successfully"})
     } catch (error) {
         return res.status(500).json({msg: "Error creating user", error: error.message});
@@ -203,9 +204,12 @@ exports.joinClass = async (req, res) => {
         if (!user) {
             return res.status(404).json({msg: "User not found"});
         }
-        if (user.role !== "student"){
-            return res.status(400).json({msg: "Missing required role"});
+        const checkDuplicateClass = await userModel.findById(userId).where({classes: {$in: Class._id }});
+        if (checkDuplicateClass){
+            return res.status(400).json({msg: "Class already exits"});
         }
+        Class.students.push(userId);
+        await Class.save();
         user.classes.push(Class._id);
         await user.save();
         res.status(200).json({msg: "Successfully join class"})
@@ -227,8 +231,7 @@ exports.addQuizHistories = async (req, res) => {
             return res.status(404).json({msg: "User not found"});
         }
         quizHistory = {
-            quiz: quizId,
-            score
+            quiz: quizId, score
         }
         user.quizHistories.score = score;
         await user.save();
