@@ -26,16 +26,17 @@ async function verifyPassword(password, hash) {
     return isMatch;
 }
 
-async function generateOTP() {
-    let OTP = '';
+async function generateCode(length) {
+    let code = '';
+    const character = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     const generate = () => {
-        for (let i = 0; i < 6; i++){
-            OTP += Math.floor(Math.random()*10);
+        for (let i = 0; i < length; i++){
+            code += character.charAt(Math.floor(Math.random()*character.length))
         }
     }
 
     await generate();
-    return OTP;
+    return code;
 }
 
 module.exports = {
@@ -43,5 +44,6 @@ module.exports = {
     verifyToken,
     encryptPassword,
     verifyPassword,
-    generateTokenResetPassword
+    generateTokenResetPassword,
+    generateCode
 };

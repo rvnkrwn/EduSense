@@ -1,6 +1,8 @@
 const userRoute = require("express").Router();
 const userController = require("../controllers/userController")
 const {authMiddleware} = require("../middlewares/authMiddleware");
+const {roleAdminMiddleware} = require("../middlewares/roleMiddleware");
+
 
 module.exports = app => {
 
@@ -17,10 +19,10 @@ module.exports = app => {
     // Put Method
     userRoute.put("/update", authMiddleware, userController.updateUser);
     userRoute.put("/update-password", authMiddleware, userController.updatePassword);
-    userRoute.put("/reset-password/:token", userController.verifyTokenRestPassword);
+    userRoute.put("/reset-password/:token", userController.verifyTokenResetPassword);
 
     // Delete Method
-    userRoute.delete("/delete/:userId", authMiddleware, userController.deleteUser);
+    userRoute.delete("/delete/:userId", authMiddleware, roleAdminMiddleware, userController.deleteUser);
 
 
     app.use("/api/user", userRoute);

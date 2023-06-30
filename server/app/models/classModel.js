@@ -5,11 +5,21 @@ const Schema = mongoose.Schema;
 const classSchema = new Schema({
     name: {
         type: String,
+        required: true
+    },
+    subjects: {
+        type: String,
+        required: true
+    },
+    code: {
+        type: String,
         required: true,
+        unique: true
     },
     teacher: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
     students: [{
         type: Schema.Types.ObjectId,

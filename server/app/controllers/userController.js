@@ -138,17 +138,8 @@ exports.updatePassword = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
     const {userId} = req.params;
-    const {role} = req.user;
 
     try {
-        if (role !== "admin") {
-            return res.status(403).json({msg: "Only admin can delete user"});
-        }
-        const user = await userModel.findById(userId);
-        if (user.role === "admin") {
-            return res.status(403).json({msg: "Can't delete admin"});
-        }
-
         const deletedUser = await userModel.findByIdAndDelete(userId);
 
         if (!deletedUser) {
@@ -182,7 +173,7 @@ exports.sendResetPassword = async (req, res) => {
     }
 }
 
-exports.verifyTokenRestPassword = async (req, res) => {
+exports.verifyTokenResetPassword = async (req, res) => {
     const {token} = req.params;
     const {password} = req.body;
     const passwordV2 = await encryptPassword(password);

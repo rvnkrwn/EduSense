@@ -25,7 +25,7 @@ async function sendResetPasswordEmail(fullName, email, token) {
                 <small style="font-style: italic">Noted: Link reset password is valid in 5 minutes</small>
                 <p>Thank you.</p><br>
                 <p>Best regards,</p>
-                <p>User Support Team</p>`,
+                <p>${process.env.NAME_APP}</p>`,
         });
 
         console.log("Email sent:", info.messageId);
