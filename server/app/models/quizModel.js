@@ -9,8 +9,20 @@ const quizSchema = new Schema({
     },
     questions: [{
         type: Schema.Types.ObjectId,
-        ref: 'Question'
+        ref: 'Question',
+        required: true,
     }],
+    startTime: {
+        type: Date, required: true
+    }, endTime: {
+        type: Date, required: true
+    },
+    status: {
+        type: String,
+        enum: ['pending','active','expired'],
+        default: 'pending',
+        required: true
+    }
 });
 
 module.exports = mongoose.model('Quiz', quizSchema);

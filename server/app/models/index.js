@@ -7,6 +7,5 @@ module.exports = {
     userModel: require("./userModel"),
     classModel: require("./classModel"),
     quizModel: require("./quizModel"),
-    questionModel: require("./questionModel"),
-    quizHistoryModel: require("./quizHistoryModel")
+    questionModel: require("./questionModel")
 }

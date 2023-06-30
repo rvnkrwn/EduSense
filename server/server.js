@@ -26,6 +26,7 @@ model.mongoose.connect(model.url).then(() => {
 
 // User Router
 require("./app/routes/userRouter")(app);
+require("./app/routes/classRouter")(app);
 
 
 // running server

@@ -1,5 +1,5 @@
 exports.roleAdminMiddleware = async (req, res, next) => {
-    const {userId, role} = req.body;
+    const {userId, role} = req.user;
     if (!role) {
         return res.status(401).json({msg: "Missing role at this user"});
     }
@@ -11,7 +11,7 @@ exports.roleAdminMiddleware = async (req, res, next) => {
 }
 
 exports.roleTeacherMiddleware = async (req, res, next) => {
-    const {userId, role} = req.body;
+    const {userId, role} = req.user;
     if (!role) {
         return res.status(401).json({msg: "Missing role at this user"});
     }
@@ -23,7 +23,7 @@ exports.roleTeacherMiddleware = async (req, res, next) => {
 }
 
 exports.roleStudentMiddleware = async (req, res, next) => {
-    const {userId, role} = req.body;
+    const {userId, role} = req.user;
     if (!role) {
         return res.status(401).json({msg: "Missing role at this user"});
     }

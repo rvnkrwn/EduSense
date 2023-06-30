@@ -1,7 +1,7 @@
 const userRoute = require("express").Router();
 const userController = require("../controllers/userController")
 const {authMiddleware} = require("../middlewares/authMiddleware");
-const {roleAdminMiddleware} = require("../middlewares/roleMiddleware");
+const {roleAdminMiddleware, roleStudentMiddleware} = require("../middlewares/roleMiddleware");
 
 
 module.exports = app => {
@@ -10,6 +10,7 @@ module.exports = app => {
     userRoute.post("/register", userController.create);
     userRoute.post("/login", userController.login);
     userRoute.post("/forget-password", userController.sendResetPassword);
+    userRoute.post("/join-class", authMiddleware, roleStudentMiddleware, userController.joinClass);
 
     // Get Method
     userRoute.get("/get-user", authMiddleware, userController.getUser);
