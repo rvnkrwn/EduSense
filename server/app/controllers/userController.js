@@ -6,12 +6,12 @@ const {sendResetPasswordEmail, sendRegistrationThankYouEmail} = require("../util
 
 // User CRUD
 exports.create = async (req, res) => {
-    const {fullName, email, password, phone, role} = req.body;
-
-    if (!fullName || !email || !password || !phone || !role) {
-        return res.status(400).json({msg: "Missing required fields"})
-    }
     try {
+        const {fullName, email, password, phone, role} = req.body;
+
+        if (!fullName || !email || !password || !phone || !role) {
+            return res.status(400).json({msg: "Missing required fields"})
+        }
         const User = await userModel.findOne({email});
 
         if (User) {
@@ -29,11 +29,11 @@ exports.create = async (req, res) => {
 }
 
 exports.login = async (req, res) => {
-    const {email, password} = req.body;
-    if (!email || !password) {
-        return res.status(400).json({msg: "Missing required fields"});
-    }
     try {
+        const {email, password} = req.body;
+        if (!email || !password) {
+            return res.status(400).json({msg: "Missing required fields"});
+        }
         const User = await userModel.findOne({email});
         if (!User) {
             return res.status(401).json({msg: "Invalid email or password"});
@@ -53,9 +53,8 @@ exports.login = async (req, res) => {
 }
 
 exports.getUser = async (req, res) => {
-    const {userId} = req.user;
-
     try {
+        const {userId} = req.user;
         const User = await userModel.findById(userId).select("-password");
         if (!User) {
             return res.status(404).json({msg: "User not found"});
@@ -67,8 +66,8 @@ exports.getUser = async (req, res) => {
 };
 
 exports.findUser = async (req, res) => {
-    const {userId} = req.params;
     try {
+        const {userId} = req.params;
         const User = await userModel.findById(userId);
         if (!User) {
             return res.status(404).json({msg: "User not found"})
@@ -90,10 +89,10 @@ exports.findAllUser = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
-    const {userId} = req.user;
-    const {password, ...updateData} = req.body;
-
     try {
+        const {userId} = req.user;
+        const {password, ...updateData} = req.body;
+
         const updatedUser = await userModel.findByIdAndUpdate(userId, updateData, {new: true});
 
         if (!updatedUser) {
@@ -107,11 +106,11 @@ exports.updateUser = async (req, res) => {
 };
 
 exports.updatePassword = async (req, res) => {
-    const {userId} = req.user;
-    const {newPassword} = req.body;
-    const passwordV2 = await encryptPassword(newPassword)
-
     try {
+        const {userId} = req.user;
+        const {newPassword} = req.body;
+        const passwordV2 = await encryptPassword(newPassword)
+
         const updatedUser = await userModel.findByIdAndUpdate(userId, {password: passwordV2}, {new: true});
 
         if (!updatedUser) {
@@ -125,9 +124,9 @@ exports.updatePassword = async (req, res) => {
 };
 
 exports.deleteUser = async (req, res) => {
-    const {userId} = req.params;
-
     try {
+        const {userId} = req.params;
+
         const deletedUser = await userModel.findByIdAndDelete(userId);
 
         if (!deletedUser) {
@@ -141,11 +140,11 @@ exports.deleteUser = async (req, res) => {
 };
 
 exports.sendResetPassword = async (req, res) => {
-    const {email} = req.body;
-    if (!email) {
-        return res.status(400).json({msg: "Missing required fields"});
-    }
     try {
+        const {email} = req.body;
+        if (!email) {
+            return res.status(400).json({msg: "Missing required fields"});
+        }
         const User = await userModel.findOne({email});
         if (!User) {
             return res.status(200).json({msg: "If the email is registered, an OTP will be sent for verification."});
@@ -162,13 +161,13 @@ exports.sendResetPassword = async (req, res) => {
 }
 
 exports.verifyTokenResetPassword = async (req, res) => {
-    const {token} = req.params;
-    const {password} = req.body;
-    const passwordV2 = await encryptPassword(password);
-    if (!token) {
-        res.status(400).json({msg: "Request token is invalid"})
-    }
     try {
+        const {token} = req.params;
+        const {password} = req.body;
+        const passwordV2 = await encryptPassword(password);
+        if (!token) {
+            res.status(400).json({msg: "Request token is invalid"})
+        }
         const {userId} = await verifyToken(token);
 
 
@@ -188,12 +187,12 @@ exports.verifyTokenResetPassword = async (req, res) => {
 // Class
 
 exports.joinClass = async (req, res) => {
-    const {userId} = req.user;
-    const {code} = req.body;
-    if (!code) {
-        return res.status(400).json({msg: "Missing required fields"});
-    }
     try {
+        const {userId} = req.user;
+        const {code} = req.body;
+        if (!code) {
+            return res.status(400).json({msg: "Missing required fields"});
+        }
         const Class = await classModel.findOne({code});
         if (!Class) {
             return res.status(404).json({msg: "Class not found"});
@@ -217,13 +216,13 @@ exports.joinClass = async (req, res) => {
 }
 
 exports.addQuizHistories = async (req, res) => {
-    const {userId, quizId, score} = req.user;
-
-    if (!quizId) {
-        return res.status(400).json({msg: "Missing required fields"});
-    }
-
     try {
+        const {userId, quizId, score} = req.user;
+
+        if (!quizId) {
+            return res.status(400).json({msg: "Missing required fields"});
+        }
+
         const User = await userModel.findById(userId);
         if (!User) {
             return res.status(404).json({msg: "User not found"});

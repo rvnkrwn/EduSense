@@ -3,13 +3,13 @@ const {generateCode} = require("../utils/helper");
 const mongoose = require("mongoose")
 
 exports.create = async (req, res) => {
-    const {name, subjects} = req.bodyC
-    const {userId} = req.user;
-    if (!name || !subjects) {
-        return res.status(400).json({msg: "Missing required fields"});
-    }
-    const code = await generateCode(6);
     try {
+        const {name, subjects} = req.bodyC
+        const {userId} = req.user;
+        if (!name || !subjects) {
+            return res.status(400).json({msg: "Missing required fields"});
+        }
+        const code = await generateCode(6);
         await classModel.create({
             name: name, subjects: subjects, code: code, teacher: userId
         });
@@ -20,8 +20,8 @@ exports.create = async (req, res) => {
 }
 
 exports.getListClass = async (req, res) => {
-    const {userId} = req.user; // Assuming the user's ID is stored in the _id field
     try {
+        const {userId} = req.user; // Assuming the user's ID is stored in the _id field
         const user = await userModel.findById(userId).populate("classes")
         if (!user) {
             return res.status(404).json({msg: "User not found"});
@@ -43,8 +43,8 @@ exports.getListClass = async (req, res) => {
 };
 
 exports.detailClass = async (req, res) => {
-    const {classId} = req.params; // Assuming the user's ID is stored in the _id field
     try {
+        const {classId} = req.params; // Assuming the user's ID is stored in the _id field
         const Class = await classModel.findById(classId);
         if (!Class) {
             return res.status(404).json({msg: "Class not found"});
@@ -56,12 +56,12 @@ exports.detailClass = async (req, res) => {
 };
 
 exports.leaveClass = async (req, res) => {
-    const {userId} = req.user;
-    const {classId} = req.params;
-    if (!classId) {
-        return res.status(400).json({msg: "Missing required fields"});
-    }
     try {
+        const {userId} = req.user;
+        const {classId} = req.params;
+        if (!classId) {
+            return res.status(400).json({msg: "Missing required fields"});
+        }
         const User = await userModel.findById(userId);
         if (!User) {
             return res.status(404).json({msg: "User not found"});
@@ -79,19 +79,19 @@ exports.leaveClass = async (req, res) => {
 }
 
 exports.deleteClass = async (req, res) => {
-    const {userId} = req.user;
-    const {classId} = req.params;
-    if (!classId) {
-        return res.status(400).json({msg: "Missing required fields"});
-    }
     try {
+        const {userId} = req.user;
+        const {classId} = req.params;
+        if (!classId) {
+            return res.status(400).json({msg: "Missing required fields"});
+        }
         const Users = await userModel.find();
         // if (!users) {
         //     return res.status(404).json({msg: "User not found"});
         // }
         for (let i = 0; i < Users.length; i++) {
-                Users[i].classes.pull(classId);
-                await Users[i].save();
+            Users[i].classes.pull(classId);
+            await Users[i].save();
         }
         await classModel.findByIdAndDelete(classId);
         return res.status(200).json({msg: "Successfully deleted class"});

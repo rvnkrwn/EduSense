@@ -7,7 +7,7 @@ module.exports = app => {
 
     // Post Method
     quizRoute.post("/register", authMiddleware, roleTeacherMiddleware,quizController.create);
-    quizRoute.post("/submission", quizController.submission);
+    quizRoute.post("/submission", authMiddleware, quizController.submission);
 
     app.use("/api/chatAI", quizRoute);
 }
