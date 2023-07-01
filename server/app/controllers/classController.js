@@ -13,7 +13,7 @@ exports.create = async (req, res) => {
         await classModel.create({
             name: name, subjects: subjects, code: code, teacher: userId
         });
-        return res.json({msg: "Class registered successfully"})
+        return res.status(201).json({msg: "Class registered successfully"})
     } catch (error) {
         return res.status(500).json({msg: "Error creating class", error: error.message});
     }

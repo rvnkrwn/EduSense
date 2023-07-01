@@ -53,15 +53,13 @@ exports.login = async (req, res) => {
 }
 
 exports.getUser = async (req, res) => {
-    const {userId} = req.user; // Assuming the user's ID is stored in the _id field
+    const {userId} = req.user;
 
     try {
         const user = await userModel.findById(userId).select("-password");
-
         if (!user) {
             return res.status(404).json({msg: "User not found"});
         }
-
         return res.status(200).json(user);
     } catch (error) {
         return res.status(500).json({msg: "Error retrieving user", error: error.message});
@@ -181,7 +179,7 @@ exports.verifyTokenResetPassword = async (req, res) => {
 
         user.password = passwordV2;
         await user.save();
-        res.json({msg: "Successfully updated password"})
+        res.status(200).json({msg: "Successfully updated password"})
     } catch (error) {
         return res.status(500).json({msg: "Link is Expired"});
     }
@@ -204,8 +202,8 @@ exports.joinClass = async (req, res) => {
         if (!user) {
             return res.status(404).json({msg: "User not found"});
         }
-        const checkDuplicateClass = await userModel.findById(userId).where({classes: {$in: Class._id }});
-        if (checkDuplicateClass){
+        const checkDuplicateClass = await userModel.findById(userId).where({classes: {$in: Class._id}});
+        if (checkDuplicateClass) {
             return res.status(400).json({msg: "Class already exits"});
         }
         Class.students.push(userId);

@@ -4,24 +4,25 @@ const Schema = mongoose.Schema;
 
 const quizSchema = new Schema({
     title: {
-        type: String,
-        required: true,
+        type: String, required: true,
     },
     questions: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Question',
-        required: true,
+        text: {
+            type: String, required: true,
+        }, options: [{
+            type: String, required: true,
+        }], correctOption: {
+            type: String, required: true,
+        },
     }],
     startTime: {
-        type: Date, required: true
-    }, endTime: {
-        type: Date, required: true
+        type: Date
+    },
+    endTime: {
+        type: Date
     },
     status: {
-        type: String,
-        enum: ['pending','active','expired'],
-        default: 'pending',
-        required: true
+        type: String, enum: ['pending', 'active', 'expired'], default: 'pending'
     }
 });
 
