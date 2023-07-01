@@ -12,9 +12,9 @@ exports.create = async (req, res) => {
         return res.status(400).json({msg: "Missing required fields"})
     }
     try {
-        const user = await userModel.findOne({email});
+        const User = await userModel.findOne({email});
 
-        if (user) {
+        if (User) {
             return res.status(400).json({msg: "Email already exits"})
         }
         const passwordV2 = await encryptPassword(password);
@@ -34,16 +34,16 @@ exports.login = async (req, res) => {
         return res.status(400).json({msg: "Missing required fields"});
     }
     try {
-        const user = await userModel.findOne({email});
-        if (!user) {
+        const User = await userModel.findOne({email});
+        if (!User) {
             return res.status(401).json({msg: "Invalid email or password"});
         }
-        const match = await verifyPassword(password, user.password);
+        const match = await verifyPassword(password, User.password);
         if (!match) {
             return res.status(401).json({msg: "Invalid email or password"});
         }
         const payload = {
-            userId: user._id, role: user.role
+            userId: User._id, role: User.role
         };
         const token = await generateToken(payload);
         return res.status(200).json({msg: "User logged successfully", token});
@@ -56,11 +56,11 @@ exports.getUser = async (req, res) => {
     const {userId} = req.user;
 
     try {
-        const user = await userModel.findById(userId).select("-password");
-        if (!user) {
+        const User = await userModel.findById(userId).select("-password");
+        if (!User) {
             return res.status(404).json({msg: "User not found"});
         }
-        return res.status(200).json(user);
+        return res.status(200).json(User);
     } catch (error) {
         return res.status(500).json({msg: "Error retrieving user", error: error.message});
     }
@@ -69,11 +69,11 @@ exports.getUser = async (req, res) => {
 exports.findUser = async (req, res) => {
     const {userId} = req.params;
     try {
-        const user = await userModel.findById(userId);
-        if (!user) {
+        const User = await userModel.findById(userId);
+        if (!User) {
             return res.status(404).json({msg: "User not found"})
         }
-        const {password, ...data} = user._doc;
+        const {password, ...data} = User._doc;
         res.status(200).json(data);
     } catch (error) {
         return res.status(500).json({msg: "Error get user", error: error.message});
@@ -82,8 +82,8 @@ exports.findUser = async (req, res) => {
 
 exports.findAllUser = async (req, res) => {
     try {
-        const users = await userModel.find({}, {password: 0});
-        return res.status(200).json(users);
+        const Users = await userModel.find({}, {password: 0});
+        return res.status(200).json(Users);
     } catch (error) {
         return res.status(500).json({msg: "Error retrieving users", error});
     }
@@ -146,15 +146,15 @@ exports.sendResetPassword = async (req, res) => {
         return res.status(400).json({msg: "Missing required fields"});
     }
     try {
-        const user = await userModel.findOne({email});
-        if (!user) {
+        const User = await userModel.findOne({email});
+        if (!User) {
             return res.status(200).json({msg: "If the email is registered, an OTP will be sent for verification."});
         }
         const payload = {
-            userId: user._id
+            userId: User._id
         }
         const token = await generateTokenResetPassword(payload);
-        await sendResetPasswordEmail(user.fullName, email, token);
+        await sendResetPasswordEmail(User.fullName, email, token);
         return res.status(200).json({msg: "If the email is registered, an OTP will be sent for verification."});
     } catch (error) {
         return res.status(500).json({msg: "Error sending OTP", error});
@@ -172,13 +172,13 @@ exports.verifyTokenResetPassword = async (req, res) => {
         const {userId} = await verifyToken(token);
 
 
-        const user = await userModel.findById(userId);
-        if (!user) {
+        const User = await userModel.findById(userId);
+        if (!User) {
             return res.status(404).json({msg: "User not found"});
         }
 
-        user.password = passwordV2;
-        await user.save();
+        User.password = passwordV2;
+        await User.save();
         res.status(200).json({msg: "Successfully updated password"})
     } catch (error) {
         return res.status(500).json({msg: "Link is Expired"});
@@ -198,8 +198,8 @@ exports.joinClass = async (req, res) => {
         if (!Class) {
             return res.status(404).json({msg: "Class not found"});
         }
-        const user = await userModel.findById(userId);
-        if (!user) {
+        const User = await userModel.findById(userId);
+        if (!User) {
             return res.status(404).json({msg: "User not found"});
         }
         const checkDuplicateClass = await userModel.findById(userId).where({classes: {$in: Class._id}});
@@ -208,8 +208,8 @@ exports.joinClass = async (req, res) => {
         }
         Class.students.push(userId);
         await Class.save();
-        user.classes.push(Class._id);
-        await user.save();
+        User.classes.push(Class._id);
+        await User.save();
         res.status(200).json({msg: "Successfully join class"})
     } catch (error) {
         return res.status(500).json({msg: "Error join class", error});
@@ -224,15 +224,15 @@ exports.addQuizHistories = async (req, res) => {
     }
 
     try {
-        const user = await userModel.findById(userId);
-        if (!user) {
+        const User = await userModel.findById(userId);
+        if (!User) {
             return res.status(404).json({msg: "User not found"});
         }
         quizHistory = {
             quiz: quizId, score
         }
-        user.quizHistories.score = score;
-        await user.save();
+        User.quizHistories.score = score;
+        await User.save();
         res.status(200).json({msg: "Successfully add quizHistories"})
     } catch (error) {
         return res.status(500).json({msg: "Error add quizHistories", error});
