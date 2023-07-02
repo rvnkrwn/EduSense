@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 #loader {
-    animation: 4s loader;
+    animation: 2s loader;
 }
 
 @keyframes loader {

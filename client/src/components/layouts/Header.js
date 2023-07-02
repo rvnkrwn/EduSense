@@ -1,27 +1,32 @@
-import {useState} from "react";
 import {FaLinkedin} from "react-icons/fa"
-import {useEffect} from "react";
+import {useRecoilState} from "recoil";
+import {isLoggedInState, User} from "../../services/authAtoms";
+import {Link} from "react-router-dom";
 
 export default function Header() {
-    const [isLogin, setIsLogin] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
+    const [user, setUser] = useRecoilState(User);
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        window.location.href = "/"
+    }
 
     const menuAtLogout = (
         <>
-            <li><a>Home</a></li>
-            <li><a>About</a></li>
-            <li><a>Contact</a></li>
-            <li><a onClick={() => setIsLogin(true)}>Login</a></li>
-            <li><a>Register</a></li>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/about">About</Link></li>
+            <li><Link to="/contact">Contact</Link></li>
+            <li><Link to="/login">Login</Link></li>
         </>
     );
     const menuAtLogin = (
         <>
-            <li><a>Home</a></li>
-            <li><a>Class</a></li>
-            <li><a>Course Material</a></li>
-            <li><a>Quiz</a></li>
-            <li><a>Coursework</a></li>
-            <li><a>Discussion</a></li>
+            <li><Link to="/class">Class</Link></li>
+            <li><Link to="/course-material">Course Material</Link></li>
+            <li><Link to="/quiz">Quiz</Link></li>
+            <li><Link to="/coursework">Coursework</Link></li>
+            <li><Link to="/discussion">Discussion</Link></li>
         </>
     );
 
@@ -31,7 +36,7 @@ export default function Header() {
             <input id="my-drawer-3" type="checkbox" className="drawer-toggle"/>
             <div className="drawer-content flex flex-col">
                 {/* Navbar */}
-                <div className="w-full navbar bg-base-300 flex justify-between">
+                <div className="w-full navbar bg-base-300/50 flex justify-between lg:justify-around">
                     <div className="flex-none lg:hidden">
                         <label htmlFor="my-drawer-3" className="btn btn-square btn-ghost">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -45,14 +50,16 @@ export default function Header() {
                     <div className="hidden lg:block">
                         <ul className="menu menu-horizontal">
                             {/* Navbar menu content here */}
-                            {isLogin ? menuAtLogin : menuAtLogout}
+                            {isLoggedIn ? menuAtLogin : menuAtLogout}
                         </ul>
                     </div>
                     <div className="px-2 mx-2 flex">
-                        <div className="self-center">
-                            <div className="btn btn-ghost"><FaLinkedin className="text-xl"/></div>
-                        </div>
-                        <label className="swap swap-rotate self-center btn btn-ghost">
+                        {isLoggedIn ? "" :
+                            <div className="self-center">
+                                <div className="btn btn-sm btn-ghost"><FaLinkedin className="text-xl"/></div>
+                            </div>
+                        }
+                        <label className="swap swap-rotate self-center btn btn-sm btn-ghost">
 
                             {/* this hidden checkbox controls the state */}
                             <input type="checkbox" onChange={(e) => {
@@ -63,7 +70,7 @@ export default function Header() {
                                 } else {
                                     body.setAttribute("data-theme", "dark")
                                 }
-                            }} />
+                            }}/>
 
                             {/* sun icon */}
                             <svg className="swap-off fill-current w-6 h-6" xmlns="http://www.w3.org/2000/svg"
@@ -80,21 +87,25 @@ export default function Header() {
                             </svg>
 
                         </label>
-                        <div className="dropdown dropdown-end self-center">
-                            <label tabIndex={0} className="btn btn-ghost cursor-pointer">
-                                <div className="avatar">
-                                    <div className="w-8 rounded-full">
-                                        <img
-                                            src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"/>
+                        {isLoggedIn ?
+                            (<div className="dropdown dropdown-end self-center">
+                                <label tabIndex={0} className="btn btn-ghost cursor-pointer">
+                                    <div className="avatar">
+                                        <div className="w-8 rounded-full">
+                                            <img alt=""
+                                                 src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"/>
+                                        </div>
                                     </div>
-                                </div>
-                            </label>
-                            <ul tabIndex={0}
-                                className="dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52">
-                                <li><a>Profile</a></li>
-                                <li><a onClick={() => setIsLogin(false)}>Logout</a></li>
-                            </ul>
-                        </div>
+                                </label>
+                                <ul tabIndex={0}
+                                    className="dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52">
+                                    <p className="p-2 text-center">Hi, {user.fullName}</p>
+                                    <li><Link to="">Profile</Link></li>
+                                    <li><Link to="" onClick={() => handleLogout()}>Logout</Link></li>
+                                </ul>
+                            </div>) : (
+                                <button className="btn btn-sm border border-primary/80 hover:border-primary ml-2">Join
+                                    Now</button>)}
                     </div>
                 </div>
                 {/* Page content here */}
@@ -103,7 +114,7 @@ export default function Header() {
                 <label htmlFor="my-drawer-3" className="drawer-overlay"></label>
                 <ul className="menu p-4 w-80 h-full bg-base-200">
                     {/* Sidebar content here */}
-                    {isLogin ? menuAtLogin : menuAtLogout}
+                    {isLoggedIn ? menuAtLogin : menuAtLogout}
                 </ul>
 
             </div>

@@ -1,29 +1,60 @@
 import Header from "./components/layouts/Header";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {Route, Routes} from "react-router-dom";
+import Welcome from "./pages/Welcome";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import {useRecoilState} from "recoil";
+import {isLoggedInState, User} from "./services/authAtoms";
+import axios from "axios";
+import Class from "./pages/Class";
+import Loading from "./components/Loading";
+import AddClass from "./pages/class/AddClass";
 
 function App() {
+    const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
+    const [user, setUser] = useRecoilState(User);
     const [isLoad, setIsLoad] = useState(true);
-    setTimeout(() => {
-        setIsLoad(false)
-    },4000)
+
+    const token = localStorage.getItem("token");
+
+    useEffect(() => {
+        const getUser = async () => {
+            try {
+
+                const response = await axios.get("http://localhost:9000/api/user/get-user", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                const data = response.data;
+                if (response) {
+                    setUser(data);
+                    setIsLoggedIn(true);
+                } else {
+                    setIsLoggedIn(false);
+                }
+                setIsLoad(false);
+            } catch (error) {
+                localStorage.removeItem("token");
+                setIsLoggedIn(false);
+                setIsLoad(false);
+            }
+        }
+        getUser();
+    }, []);
+
     return (
         <div className="App">
-            {isLoad ? <div className="fixed h-screen w-screen bg-base-300/50 backdrop-blur" style={{zIndex: 999999}}><div
-                className="w-full h-2 bg-base-100"><div id="loader" className="bg-blue-600 h-full"></div></div></div> : ""}
+            {isLoad? <Loading/> : ""}
             <Header/>
             <main>
-                <div className="hero min-h-screen bg-base-200">
-                    <div className="hero-content flex-col lg:flex-row-reverse">
-                        <img src="https://daisyui.com/images/stock/photo-1635805737707-575885ab0820.jpg"
-                             className="max-w-sm rounded-lg shadow-2xl"/>
-                        <div>
-                            <h1 className="text-5xl font-bold">Box Office News!</h1>
-                            <p className="py-6">Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
-                                excepturi exercitationem quasi. In deleniti eaque aut repudiandae et a id nisi.</p>
-                            <button className="btn btn-primary">Get Started</button>
-                        </div>
-                    </div>
-                </div>
+                <Routes>
+                    <Route path="/" element={isLoggedIn ? "" : <Welcome/>}/>
+                    <Route path="/Class" element={<Class />}/>
+                    <Route path="/add-class" element={<AddClass />}/>
+                    <Route path="/login" element={<Login/>}/>
+                </Routes>
             </main>
         </div>
     );
