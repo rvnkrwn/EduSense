@@ -92,7 +92,7 @@ export default function Header() {
                             <ul tabIndex={0}
                                 className="dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52">
                                 <li><a>Profile</a></li>
-                                <li><a>Logout</a></li>
+                                <li><a onClick={() => setIsLogin(false)}>Logout</a></li>
                             </ul>
                         </div>
                     </div>
