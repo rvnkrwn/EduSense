@@ -2,13 +2,19 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import {useRecoilValue} from "recoil";
+import {isLoggedInState} from "../../services/atoms";
 
 export default function Quiz() {
+  const isLoggedIn = useRecoilValue(isLoggedInState);
   const { quizId } = useParams();
   const [quiz, setQuiz] = useState();
   const [answers, setAnswers] = useState([]);
   const [msg, setMsg] = useState("");
 
+  if (!isLoggedIn) {
+    window.location.href="/login"
+  }
   const token = localStorage.getItem("token");
   useEffect(() => {
     const getQuiz = async () => {

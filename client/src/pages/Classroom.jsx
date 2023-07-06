@@ -1,17 +1,21 @@
 import React, { useState } from "react";
 import { useRecoilValue } from "recoil";
-import { userState } from "../services/atoms";
+import {isLoggedInState, userState} from "../services/atoms";
 import axios from "axios";
 import { FaClipboard } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 export default function Classroom() {
   const user = useRecoilValue(userState);
+  const isLoggedIn = useRecoilValue(isLoggedInState);
   const [name, setName] = useState("");
   const [subjects, setSubjects] = useState("");
   const [code, setCode] = useState("");
   const [msg, setMsg] = useState("");
 
+  if (!isLoggedIn) {
+    window.location.href="/login"
+  }
   const token = localStorage.getItem("token");
   const handleSubmitClass = async () => {
     try {

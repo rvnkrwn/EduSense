@@ -2,17 +2,22 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
-import { userState } from "../../services/atoms";
+import {isLoggedInState, userState} from "../../services/atoms";
 import Loading from "../../components/Loading";
 
 export default function MainClass() {
-  const { classId } = useParams();
   const user = useRecoilValue(userState);
+  const isLoggedIn = useRecoilValue(isLoggedInState);
+  const { classId } = useParams();
   const [Class, setClass] = useState(null);
   const [title, setTitle] = useState(null);
   const [prompt, setPrompt] = useState(null);
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
+
+  if (!isLoggedIn) {
+    window.location.href="/login"
+  }
 
   const token = localStorage.getItem("token");
   console.log(user);
