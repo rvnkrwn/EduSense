@@ -22,6 +22,7 @@ export default function MainClass() {
   const token = localStorage.getItem("token");
   useEffect(() => {
     const token = localStorage.getItem("token");
+    setLoading(true)
     const getDetailClass = async () => {
       try {
         const response = await axios.get(
@@ -38,6 +39,7 @@ export default function MainClass() {
       }
     };
     getDetailClass();
+    setLoading(false)
   }, [classId, setClass]);
 
   const handleNewQuiz = async () => {
