@@ -1,4 +1,4 @@
-const {quizModel, classModel, userModel} = require("../models");
+const {quizModel, classModel, userModel, mongoose} = require("../models");
 const {autoGenerateQuestions} = require("../utils/openai");
 
 exports.create = async (req, res) => {
@@ -33,6 +33,30 @@ exports.create = async (req, res) => {
 }
 
 
+exports.detailQuiz = async (req, res) => {
+    try {
+        const {userId} = req.user;
+        const {quizId} = req.params;
+        const User = await userModel.findById(userId);
+        if (!quizId) {
+            return res.status(400).json({msg: "Missing required fields"});
+        }
+        const Quiz = await quizModel.findById(quizId).select("-questions.correctOption");
+
+        if (!User) {
+            return res.status(404).json({msg: "User not found"});
+        }
+        if (!Quiz) {
+            return res.status(404).json({msg: "Quiz not found"});
+        }
+
+        return res.status(200).json(Quiz);
+    } catch (error) {
+        return res.status(500).json({msg: "Error get quiz", error})
+    }
+}
+
+
 exports.submission = async (req, res) => {
     try {
         const {userId} = req.user;
@@ -59,7 +83,7 @@ exports.submission = async (req, res) => {
         const grade = (100/questions.length)*correct;
         const User = await userModel.findById(userId);
         User.quizHistories.push({
-            quiz: quizId, score: grade
+            quiz: new mongoose.Types.ObjectId(quizId), title: Quiz.title, score: grade
         })
         await User.save();
         return res.status(200).json({msg: "Successfully submission auto correct", grade});

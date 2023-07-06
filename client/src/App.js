@@ -1,63 +1,74 @@
-import Header from "./components/layouts/Header";
-import {useEffect, useState} from "react";
-import {Route, Routes} from "react-router-dom";
-import Welcome from "./pages/Welcome";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import {useRecoilState} from "recoil";
-import {isLoggedInState, User} from "./services/authAtoms";
+import React, { useEffect, useState } from "react";
+import { Route, Routes } from "react-router-dom";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import axios from "axios";
-import Class from "./pages/Class";
+import Header from "./components/layouts/Header";
+import Footer from "./components/layouts/Footer";
 import Loading from "./components/Loading";
-import AddClass from "./pages/class/AddClass";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Classroom from "./pages/Classroom";
+import Welcome from "./pages/home/Welcome";
+import Home from "./pages/Home";
+import { isLoggedInState, userState } from "./services/atoms";
+import MainClass from "./pages/classroom/index.jsx";
+import Quiz from "./pages/classroom/Quiz";
 
 function App() {
-    const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
-    const [user, setUser] = useRecoilState(User);
-    const [isLoad, setIsLoad] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
+  const setUser = useSetRecoilState(userState);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
     const token = localStorage.getItem("token");
 
-    useEffect(() => {
-        const getUser = async () => {
-            try {
+    const getUser = async () => {
+      try {
+        const response = await axios.get("https://m-skripsi.my.id/api/user/get-user", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+        setUser(response.data);
+        setIsLoggedIn(true);
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+        setIsLoggedIn(false);
+        setLoading(false);
+      }
+    };
 
-                const response = await axios.get("http://localhost:9000/api/user/get-user", {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                const data = response.data;
-                if (response) {
-                    setUser(data);
-                    setIsLoggedIn(true);
-                } else {
-                    setIsLoggedIn(false);
-                }
-                setIsLoad(false);
-            } catch (error) {
-                localStorage.removeItem("token");
-                setIsLoggedIn(false);
-                setIsLoad(false);
-            }
-        }
-        getUser();
-    }, []);
+    if (token) {
+      getUser();
+    } else {
+      setIsLoggedIn(false);
+      setLoading(false);
+    }
+  }, [setIsLoggedIn, setUser]);
 
-    return (
-        <div className="App">
-            {isLoad? <Loading/> : ""}
-            <Header/>
-            <main>
-                <Routes>
-                    <Route path="/" element={isLoggedIn ? "" : <Welcome/>}/>
-                    <Route path="/Class" element={<Class />}/>
-                    <Route path="/add-class" element={<AddClass />}/>
-                    <Route path="/login" element={<Login/>}/>
-                </Routes>
-            </main>
-        </div>
-    );
+  if (loading) {
+    return <Loading />;
+  }
+
+  return (
+    <>
+      <Header />
+      <main className="bg-base min-h-screen">
+        <Routes>
+          <Route path="/" element={isLoggedIn ? <Home /> : <Welcome />} />
+          <Route path="/about" element={<Home />} />
+          <Route path="/classroom" element={<Classroom />} />
+          <Route path="/classroom/:classId" element={<MainClass/>} />
+          <Route path="/quiz/:quizId" element={<Quiz/> } />
+          <Route path="/contact" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </main>
+      <Footer />
+    </>
+  );
 }
 
 export default App;

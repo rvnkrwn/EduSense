@@ -18,6 +18,8 @@ const userSchema = new Schema({
     }], quizHistories: [{
         quiz: {
             type: Schema.Types.ObjectId, ref: 'Quiz'
+        }, title: {
+            type: String
         }, score: {
             type: Number, default: 0
         }

@@ -17,7 +17,7 @@ exports.autoGenerateQuestions = async (prompt) => {
                      "options": ["4","6","8","10"],
                      "correctOption": "4"
                  }
-             ]'`,
+             ]' catatan: pastikan correctOption adalah jawaban yang paling tepat dan benar`,
             max_tokens: 1000,
             temperature: 0.8
         });

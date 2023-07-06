@@ -55,7 +55,7 @@ exports.login = async (req, res) => {
 exports.getUser = async (req, res) => {
     try {
         const {userId} = req.user;
-        const User = await userModel.findById(userId).select("-password");
+        const User = await userModel.findById(userId).select("-password").populate("classes");
         if (!User) {
             return res.status(404).json({msg: "User not found"});
         }

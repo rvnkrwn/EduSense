@@ -4,15 +4,25 @@ const mongoose = require("mongoose")
 
 exports.create = async (req, res) => {
     try {
-        const {name, subjects} = req.bodyC
+        const {name, subjects} = req.body;
         const {userId} = req.user;
+
         if (!name || !subjects) {
             return res.status(400).json({msg: "Missing required fields"});
         }
+
+        const user = await userModel.findById(userId);
+        if (!user) {
+            return res.status(404).json({msg: "User not found"});
+        }
+
         const code = await generateCode(6);
-        await classModel.create({
-            name: name, subjects: subjects, code: code, teacher: userId
+        const Class = await classModel.create({
+            name: name, subjects: subjects, code: code, teacher: new mongoose.Types.ObjectId(userId)
         });
+
+        user.classes.push(Class._id);
+        await user.save();
         return res.status(201).json({msg: "Class registered successfully"})
     } catch (error) {
         return res.status(500).json({msg: "Error creating class", error: error.message});
@@ -44,8 +54,8 @@ exports.getListClass = async (req, res) => {
 
 exports.detailClass = async (req, res) => {
     try {
-        const {classId} = req.params; // Assuming the user's ID is stored in the _id field
-        const Class = await classModel.findById(classId);
+        const {classId} = req.params;
+        const Class = await classModel.findById(classId).populate({path: "teacher",select: "-password"}).populate({path: "students",select: "-password"}).populate({path: "quizzes",select: "-questions.correctOption"});
         if (!Class) {
             return res.status(404).json({msg: "Class not found"});
         }
