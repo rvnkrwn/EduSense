@@ -54,14 +54,15 @@ function App() {
   return (
     <>
       <Header />
-      <main className="min-h-screen p-2">
+      <main className="min-h-screen p-2 container mx-auto">
         <Routes>
           <Route path="/" element={isLoggedIn ? <Home /> : <Welcome />} />
           <Route path="/about" element={<Home />} />
           <Route path="/classroom" element={<Classroom />} />
           <Route path="/classroom/:classId" element={<MainClass/>} />
           <Route path="/quiz/:quizId" element={<Quiz/> } />
-          <Route path="/contact" element={<Home />} />
+          <Route path="/contact" element={<p>ini contact</p>} />
+          <Route path="/quiz" element={<p>ini quiz</p>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>

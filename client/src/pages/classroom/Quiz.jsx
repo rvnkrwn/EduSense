@@ -94,7 +94,7 @@ export default function Quiz() {
   return (
     <form className="p-2">
       {quiz && quiz._id ? (
-        <div className="p-6 container m-5 mx-auto max-w-4xl shadow-md border">
+        <div className="p-6 m-5 mx-auto max-w-4xl shadow-md border">
           <h2 className="text-xl text-center capitalize p-2 mb-2">
             {quiz.title}
           </h2>

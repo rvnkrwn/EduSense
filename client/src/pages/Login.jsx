@@ -13,7 +13,10 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
 
   if(isLoggedIn){
-    return window.location.href="/"
+    if (window.history){
+      window.history.back();
+    }
+    window.location.href="/"
   }
 
   const handleSubmit = async (e) => {

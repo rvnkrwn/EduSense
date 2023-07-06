@@ -145,7 +145,7 @@ export default function Classroom() {
   );
 
   return (
-    <div className="container mx-auto px-4 py-2">
+    <div className="mx-auto px-4 py-2">
       <div className="flex justify-between border-b py-2">
         <h2 className="self-center text-xl font-semibold">Class List</h2>
         <div className="">

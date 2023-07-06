@@ -61,7 +61,7 @@ export default function Header() {
         <Link to="/classroom">Classroom</Link>
       </li>
       <li>
-        <Link to="/Quiz">Quiz</Link>
+        <Link to="/quiz">Quiz</Link>
       </li>
       <li>
         <Link to="/contact">Contact</Link>

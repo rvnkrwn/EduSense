@@ -20,7 +20,6 @@ export default function MainClass() {
   }
 
   const token = localStorage.getItem("token");
-  console.log(user);
   useEffect(() => {
     const token = localStorage.getItem("token");
     const getDetailClass = async () => {
@@ -120,7 +119,7 @@ export default function MainClass() {
   return (
     <div className="px-4">
       {Class && Class._id ? (
-        <div key={Class._id} className="container p-2 mx-auto">
+        <div key={Class._id} className="p-2 mx-auto">
           <div className="title border-b flex justify-between py-2">
             <div className="self-center">
               <h2 className="md:text-xl font-bold text-secondary">
