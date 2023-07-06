@@ -135,7 +135,7 @@ export default function MainClass() {
                       key={quiz._id}
                       className="flex justify-between border-b mt-2 py-2"
                     >
-                      <h4 className="self-end capitalize text-lg">
+                      <h4 className="self-end capitalize lg:text-lg">
                         {quiz.title}
                       </h4>
                       {user && user.quizHistories.length > 0 ? (
