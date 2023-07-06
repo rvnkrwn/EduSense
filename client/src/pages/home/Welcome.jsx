@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Welcome() {
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
+    <div className="flex justify-center items-center h-screen">
       <div className="max-w-sm bg-white rounded shadow p-8">
         <h1 className="text-3xl font-bold mb-4">Welcome to EduSense</h1>
         <p className="text-gray-700 mb-6">

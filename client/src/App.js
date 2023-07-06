@@ -54,7 +54,7 @@ function App() {
   return (
     <>
       <Header />
-      <main className="bg-base min-h-screen">
+      <main className="min-h-screen p-2">
         <Routes>
           <Route path="/" element={isLoggedIn ? <Home /> : <Welcome />} />
           <Route path="/about" element={<Home />} />
