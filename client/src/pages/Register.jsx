@@ -129,12 +129,12 @@ export default function Register() {
               htmlFor="role"
               className="block text-sm font-semibold text-gray-800"
             >
-              Phone
+              Role
             </label>
             <select
               name="role"
               id="role"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full mt-2"
               value={role}
               onChange={(e) => setRole(e.target.value)}
             >
@@ -143,9 +143,6 @@ export default function Register() {
               <option value="teacher">Teacher</option>
             </select>
           </div>
-          <Link to="#" className="text-xs text-purple-600 hover:underline">
-            Forget Password?
-          </Link>
           <div className="mt-6">
             <button
               type="button"
