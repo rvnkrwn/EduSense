@@ -19,7 +19,7 @@ const userSchema = new Schema({
         quiz: {
             type: Schema.Types.ObjectId, ref: 'Quiz'
         }, title: {
-            type: String
+            type: String, required: true
         }, score: {
             type: Number, default: 0
         }

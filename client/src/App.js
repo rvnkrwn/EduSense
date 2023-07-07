@@ -19,8 +19,8 @@ function App() {
     const setUser = useSetRecoilState(userState);
     const [loading, setLoading] = useState(true);
 
-    const token = localStorage.getItem("token");
     useEffect(() => {
+    const token = localStorage.getItem("token");
 
         const getUser = async () => {
             try {

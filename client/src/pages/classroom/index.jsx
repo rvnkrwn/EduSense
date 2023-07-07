@@ -38,8 +38,14 @@ export default function MainClass() {
         window.location.href = "/classroom";
       }
     };
-    getDetailClass();
-    setLoading(false)
+
+    if (token){
+      getDetailClass();
+      setLoading(false);
+      const interval = setInterval(getDetailClass, 5000); // Mengirim permintaan setiap 5 detik
+      return () => clearInterval(interval);
+    }
+
   }, [classId, setClass]);
 
   const handleNewQuiz = async () => {

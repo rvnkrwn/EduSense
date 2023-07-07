@@ -73,7 +73,6 @@ exports.submission = async (req, res) => {
 
         const questions = Quiz.questions;
         let correct = 0;
-
         for (let i = 0; i < questions.length; i++) {
             const correctOption = questions[i].correctOption;
             if (correctOption === answers[i]) {
