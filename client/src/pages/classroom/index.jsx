@@ -4,7 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import {isLoggedInState, userState} from "../../services/atoms";
 import Loading from "../../components/Loading";
-
+import Swal from "sweetalert2";
 export default function MainClass() {
   const user = useRecoilValue(userState);
   const isLoggedIn = useRecoilValue(isLoggedInState);
@@ -65,12 +65,21 @@ export default function MainClass() {
         }
       );
       if (response) {
-        setMsg(
-          <p className="text-green-500 text-center">{response.data.msg}</p>
-        );
         setLoading(false);
+        Swal.fire({
+          position: 'top-end',
+          icon: 'success',
+          title: `${response.data.msg}`,
+          showConfirmButton: false,
+          timer: 1500
+        })
       }
     } catch (error) {
+      Swal.fire(
+          'Error',
+          `${error.message}`,
+          'error'
+      )
       setMsg(<p className="text-red-500 text-center">{error.message}</p>);
       setLoading(false);
     }

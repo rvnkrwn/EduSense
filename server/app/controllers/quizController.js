@@ -82,7 +82,7 @@ exports.submission = async (req, res) => {
         const grade = (100/questions.length)*correct;
         const User = await userModel.findById(userId);
         User.quizHistories.push({
-            quiz: new mongoose.Types.ObjectId(quizId), title: Quiz.title, score: grade
+            quiz: quizId, score: grade
         })
         await User.save();
         return res.status(200).json({msg: "Successfully submission auto correct", grade});

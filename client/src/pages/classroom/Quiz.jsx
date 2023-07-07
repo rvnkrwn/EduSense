@@ -84,6 +84,7 @@ export default function Quiz() {
             if(error){
               Swal.fire("Failed!", "Your answer failed to submit.", "error");
             }
+            console.log(error)
           }
         };
         sendAnswers();
