@@ -4,6 +4,7 @@ import {isLoggedInState, userState} from "../services/atoms";
 import axios from "axios";
 import { FaClipboard } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import config from "../config";
 
 export default function Classroom() {
   const user = useRecoilValue(userState);
@@ -20,7 +21,7 @@ export default function Classroom() {
   const handleSubmitClass = async () => {
     try {
       const response = await axios.post(
-        "https://m-skripsi.my.id/api/class/register",
+        `${config.API_BASE_URL}/api/class/register`,
         {
           name: name,
           subjects: subjects,
@@ -45,7 +46,7 @@ export default function Classroom() {
   const handleJoinClass = async () => {
     try {
       const response = await axios.post(
-        "https://m-skripsi.my.id/api/user/join-class",
+        `${config.API_BASE_URL}/api/user/join-class`,
         {
           code: code,
         },

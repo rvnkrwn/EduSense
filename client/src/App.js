@@ -8,11 +8,10 @@ import Loading from "./components/Loading";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Classroom from "./pages/Classroom";
-import Welcome from "./pages/home/Welcome";
-import Home from "./pages/Home";
 import {isLoggedInState, userState} from "./services/atoms";
 import MainClass from "./pages/classroom/index.jsx";
 import Quiz from "./pages/classroom/Quiz";
+import config from "./config";
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
@@ -24,7 +23,7 @@ function App() {
 
         const getUser = async () => {
             try {
-                const response = await axios.get("https://m-skripsi.my.id/api/user/get-user", {
+                const response = await axios.get(`${config.API_BASE_URL}/api/user/get-user`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     }

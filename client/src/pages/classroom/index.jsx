@@ -5,6 +5,7 @@ import { useRecoilValue } from "recoil";
 import {isLoggedInState, userState} from "../../services/atoms";
 import Loading from "../../components/Loading";
 import Swal from "sweetalert2";
+import config from "../../config";
 export default function MainClass() {
   const user = useRecoilValue(userState);
   const isLoggedIn = useRecoilValue(isLoggedInState);
@@ -26,7 +27,7 @@ export default function MainClass() {
     const getDetailClass = async () => {
       try {
         const response = await axios.get(
-          `https://m-skripsi.my.id/api/class/detail/${classId}`,
+          `${config.API_BASE_URL}/api/class/detail/${classId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -52,7 +53,7 @@ export default function MainClass() {
     setLoading(true);
     try {
       const response = await axios.post(
-        "https://m-skripsi.my.id/api/quiz/register",
+        `${config.API_BASE_URL}/api/quiz/register`,
         {
           classId: classId,
           title: title,

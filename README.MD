@@ -8,10 +8,10 @@
 
 ### App Feature
 - Login, Register
-#### - Teacher Role
-- Create Class, Join Class, Generate Quiz, Submission Quiz
-#### - Student Role
-- Join Class, Submission Quiz
+> #### - Teacher Role:
+> - Create Class, Join Class, Generate Quiz, Submission Quiz
+> #### - Student Role:
+> - Join Class, Submission Quiz
 
 <hr/>
 
@@ -22,7 +22,7 @@ cd EduSense
 ```
 
 #### Setup Server Side
-> Make sure the system has installed php version ^8.1 and also composer.
+> Make sure the system has installed node js and npm v latest
 ```bash
 cd server
 npm install
@@ -45,6 +45,9 @@ SMTP_USER=
 SMTP_PASS=
 SMTP_MAIL=
 ```
+#### Setup Server Side
+> open and edit file src/config.js
+
 > Run the Client Side
 ```bash
 cd client

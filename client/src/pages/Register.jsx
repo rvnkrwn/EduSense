@@ -4,6 +4,7 @@ import axios from "axios";
 import { isLoggedInState } from "../services/atoms";
 import { useRecoilState } from "recoil";
 import Loading from "../components/Loading"
+import config from "../config";
 
 export default function Register() {
   const isLoggedIn = useRecoilState(isLoggedInState)[0]
@@ -26,7 +27,7 @@ export default function Register() {
     setLoading(true);
     try {
       const response = await axios.post(
-        "https://m-skripsi.my.id/api/user/register",
+        `${config.API_BASE_URL}/api/user/register`,
         {
           fullName: fullName,
           email: email,

@@ -4,6 +4,7 @@ import ColorModeSwitcher from "../ColorModeSwitcher";
 import { isLoggedInState } from "../../services/atoms";
 import { useRecoilState } from "recoil";
 import Swal from "sweetalert2";
+import config from "../../config";
 
 export default function Header() {
   const isLoggedIn = useRecoilState(isLoggedInState)[0];
@@ -42,14 +43,14 @@ export default function Header() {
         {/* Navbar */}
         <div className="w-full navbar bg-base shadow-md flex justify-between">
           <div className="px-2 mx-2 flex-1 font-semibold lg:flex-none lg:text-2xl">
-            EduSense
+            {config.APP_NAME}
           </div>
           {isLoggedIn ? (
             <div className="dropdown dropdown-end">
               <label tabIndex={0} className="btn m-1 btn-ghost">
                 <div className="avatar self-center">
                   <div className="w-8 rounded-full">
-                    <img src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                    <img src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" alt="profile" />
                   </div>
                 </div>
               </label>
