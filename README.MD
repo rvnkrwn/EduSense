@@ -45,6 +45,11 @@ SMTP_USER=
 SMTP_PASS=
 SMTP_MAIL=
 ```
+> OPENAI API KEY Config
+```env
+OPENAI_API_KEY=
+```
+
 #### Setup Server Side
 > open and edit file src/config.js
 
