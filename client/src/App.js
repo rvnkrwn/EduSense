@@ -32,7 +32,6 @@ function App() {
                 setIsLoggedIn(true);
                 setLoading(false);
             } catch (error) {
-                console.log(error);
                 setIsLoggedIn(false);
                 setLoading(false);
             }
@@ -46,7 +45,7 @@ function App() {
             setIsLoggedIn(false);
             setLoading(false);
         }
-    }, [setIsLoggedIn, setUser]);
+    }, []);
 
     if (loading) {
         return <Loading/>;

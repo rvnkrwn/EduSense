@@ -13,7 +13,6 @@ export default function Classroom() {
   const [subjects, setSubjects] = useState("");
   const [code, setCode] = useState("");
   const [msg, setMsg] = useState("");
-  console.log(user)
   if (!isLoggedIn) {
     window.location.href="/login"
   }
